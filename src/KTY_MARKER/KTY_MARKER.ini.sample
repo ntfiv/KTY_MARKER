@@ -1,0 +1,124 @@
+; KTY_MARKER.ini - 設定ファイル(サンプル)
+;
+; "KTY_MARKER.ini" にリネームして、KTY_MARKER.dll / KTY_MARKER64.dll と同じフォルダに置く。
+; ファイルが無ければ、すべて下の既定値で動く。値は半角英数字で書くこと(日本語の値は文字化けする)。
+; 行の途中の「 ;」以降はコメント。
+
+[Log]
+; 動作の記録（ログ）をファイルに書き出すか。不具合の原因を調べるときだけ true にしてください。
+;   true : %TEMP%\KTY_MARKER.log（BVE6は KTY_MARKER64.log）に、読み込んだ設定・音声の取り込みの状態・
+;          停車／走行の切り替わり・マーカーを検知した時刻とレベルなどを記録します。
+;   false: 何も書き出しません（ファイルも作りません）。通常はこちら。
+; この項目が無い・このファイルが無いときは書き出します。変更は、次にシナリオを読み込んだ時から反映されます。
+Enabled = false
+; 書き出す場所。temp(省略時) = 上の一時フォルダ / plugin = このiniと同じフォルダ(書き込めなければ一時フォルダ)
+Directory = temp
+
+[General]
+Enabled = true
+CaptureMode = Process          ; Process = BVEが鳴らす音だけを取り込む(Windows 11) / Device = 出力デバイスの音を全部
+FallbackToDevice = true        ; Processが使えないWindowsでは、自動でDeviceに切り替える
+StopSpeedKmh = 0.1             ; この速度(km/h)未満を停車中とみなし、停車中だけ検知する
+LogLevels = false              ; true = 停車中、各周波数のレベルを1秒ごとにログへ出す(しきい値の調整用。[Log] Enabled = true のときだけ)
+ConfirmSound = false           ; true = マーカーを検知したら確認音(「ピッ」を[EventN]のConfirmBeeps回)を鳴らす。動作確認用。通常はfalse
+ConfirmVolume = 30             ; 確認音の音量(%、0～100)
+ConfirmFrequency = 1000        ; 確認音の高さ(Hz)。マーカーの周波数から十分離すこと
+
+[SelfTest]
+; シナリオの読み込み時に、マーカーと同じ周波数の試験音(ほぼ聞こえない、1秒ほど)をプラグイン自身が鳴らし、
+; この環境で検知できるかを確かめる。Bluetoothイヤホンの通話(ハンズフリー)モードなど、高い音が届かない出力先では
+; 検知できないので、そのときは警告のウィンドウを出す(同じBVEの起動中は1回だけ)。
+; 試験中に鳴った本物のマーカー(シナリオ開始直後の放送など)は、試験音として扱われる。
+Enabled = true
+LevelDb = -40                  ; 試験音の大きさ(dBFS)。本物のマーカー(-30dBFS)より小さくして、余裕を確かめる
+ShowWarning = true             ; false = 失敗しても警告のウィンドウを出さない(結果はログとPanelには出る)
+ResultPanel = -1               ; 結果を書き込むPanel(0=未実施・実施中、1=OK、2=NG、3=判定できず)。-1で書き込まない
+
+[Detect]
+ThresholdDb = -70              ; マーカーがこのレベル(dBFS)以上で検知の候補
+MarginDb = 15                  ; 比較用の周波数(マーカーの外側1kHz)よりこのdB以上大きいこと
+RelativeDb = 40                ; 一番大きいマーカー周波数からこのdB以内のものだけを「鳴っている」とする(同時に鳴った音量差のあるマーカーも拾う)
+WindowMs = 20                  ; 1回の解析に使う長さ(ミリ秒)
+HopMs = 10                     ; 解析の間隔(ミリ秒)
+MinHits = 4                    ; この回数続けて見つかったら検知(マーカーは60ミリ秒以上の長さにすること)
+ReleaseHits = 10               ; 検知後、この回数続けて見つからなくなるまで同じマーカーは再検知しない
+CooldownMs = 1000              ; 検知後、この時間は同じマーカーを再検知しない
+; 鏡像のチェック: 22.05kHz・11.025kHzの古いWAVをBVEが48kHzに変換すると、元の声などの鏡像がマーカーの周波数に出て
+; 誤検知することがある(早送りで車内放送が停車中まで鳴り続けたときに確認)。鏡像の元になる周波数(22050 - f と 25950 - f)が
+; マーカーよりMirrorDb以上大きいときは、鏡像とみなして検知しない。
+MirrorCheck = true
+MirrorDb = 10                  ; 鏡像の元の周波数がマーカーよりこのdB以上大きければ鏡像とみなす(鏡像は元より20dB以上小さい)
+
+[DoorSequence]
+; ドアの再開閉を1回ずつ見分ける。戸閉・戸開のマーカー(下の Role = DoorClose / DoorOpen)とBVEのDoorOpen/DoorCloseを
+; 組み合わせて、「戸閉開始1回目 → 再開扉1回目 → 戸閉開始2回目 → … → 戸閉完了(BVEのDoorClose)」を知らせる。
+; BVEのDoorCloseは全部のドアが閉まったときにしか来ないので、それまでに来た戸閉・戸開のマーカーを数える。
+Enabled = true
+MaxAttempts = 3                ; 戸閉開始・再開扉を何回目まで知らせるか
+PitchStep = 0.5                ; 確認音の高さを回数ごとに上げる割合(1回目1000Hz → 2回目1500Hz → 3回目2000Hz)
+StatePanel = -1                ; ドアの状態を書き込むPanel(0=閉、1=開、2=閉まりかけ、3=再び開いた)。-1で書き込まない
+CloseCountPanel = -1           ; 今回の戸閉開始の回数を書き込むPanel(次にドアが開くまで残す)。-1で書き込まない
+ReopenCountPanel = -1          ; 今回の再開扉の回数を書き込むPanel(次にドアが開くまで残す)。-1で書き込まない
+EstimateCloseStart = true      ; 戸閉マーカーを取りこぼしたままBVEのDoorCloseが来たら、戸閉開始をその時点で補う(遅れる)
+
+[DoorSide]
+; ドアの左右を見分ける。戸閉・戸開のマーカー(Role = DoorClose / DoorOpen)が左右どちらのチャンネルで鳴ったかで判定する。
+; 左側のドアの音(Sound.cfgの[Door] OpenLeft・CloseLeft)のWAVは左チャンネルだけ、右側(OpenRight・CloseRight)は
+; 右チャンネルだけにマーカーを入れておくこと(MarkerTool add ... --channel L / --channel R)。
+; 全部のチャンネルに入れた古いWAVのままだと、いつも「両側」になる。
+; 読み込み時の自己診断で、試験音の左右を見分けられなかったら警告を出す(Windowsの「モノラル オーディオ」・立体音響など)。
+Enabled = true
+SideDb = 10                    ; 片方のチャンネルがこのdB以上大きければ、その側とする
+BothDb = 6                     ; 左右の差がこのdB以内なら両側とする(その間は「不明」)
+Panel = -1                     ; ドアの側を書き込むPanel(0=不明、1=左、2=右、3=両側。次にドアが開くまで残す)。-1で書き込まない
+
+[Silence]
+; 停車中にBVEの音が完全な無音になったら知らせる(AudioSilent / AudioResumed)。BVEはウィンドウからフォーカスが外れると
+; 音を出さなくなり、その間に鳴るはずの放送・ドアの音(マーカー)は検知できない。
+Enabled = true
+MinMs = 300                    ; この時間(ミリ秒)続けて完全な無音なら「BVEが音を出していない」とみなす
+Panel = -1                     ; 無音の間1を書き込むPanel。-1で書き込まない
+
+; マーカーの定義。[Event1]～[Event8]。1つでも書くと、書いたものだけが有効になる。
+;   Role   = マーカーの役割: Arrival(到着時放送) / Departure(発車時放送) / DoorClose(戸閉開始) / DoorOpen(戸開開始) / None
+;            DoorClose・DoorOpenは[DoorSequence]の再開閉の判定と、[DoorSide]の左右の判定に使う
+;   FreqA  = マーカーの周波数(Hz)
+;   FreqB  = 2つ目の周波数(Hz)。0または省略で1つの周波数だけ
+;            (2つ同時に鳴らすと、スピーカーによっては差の周波数が歪みとして聞こえることがある)
+;   Panel  = 検知したときに1を書き込むPanelのindex。-1で書き込まない
+;            (ATS Plugin Multiplexerで併用する他のプラグインと重複しない番号にすること)
+;   HoldMs = Panelを1にしておく時間(ミリ秒)
+;   ConfirmBeeps = 確認音の回数(ConfirmSound = true のとき)。省略するとイベントの番号と同じ回数。0で鳴らさない
+; 周波数は互いに500Hz以上離し、マーカー入りWAVはMarkerToolで作る(サンプリング周波数44.1kHz以上が必要)。
+
+[Event1]
+Name = Departure               ; 発車放送
+Role = Departure
+FreqA = 18500
+Panel = -1
+HoldMs = 1000
+ConfirmBeeps = 1
+
+[Event2]
+Name = DoorCloseStart          ; 戸閉開始
+Role = DoorClose
+FreqA = 19000
+Panel = -1
+HoldMs = 1000
+ConfirmBeeps = 2
+
+[Event3]
+Name = DoorOpenStart           ; 戸開開始
+Role = DoorOpen
+FreqA = 19500
+Panel = -1
+HoldMs = 1000
+ConfirmBeeps = 3
+
+[Event4]
+Name = Arrival                 ; 到着時放送
+Role = Arrival
+FreqA = 18000
+Panel = -1
+HoldMs = 1000
+ConfirmBeeps = 4

@@ -1,0 +1,18 @@
+# ビルドの途中生成物・成果物
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# 配布パッケージの置き場所(内房線サンプル入りのzipはGitHubのReleasesにだけ置く)
+/dist/
+
+# ログ・ごみ
+*.log
+*.log.old
+Thumbs.db
+desktop.ini
+__pycache__/

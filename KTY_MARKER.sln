@@ -1,0 +1,46 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BD841F1C-453E-431A-818F-4C42EA660B6C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KTY_MARKER", "src\KTY_MARKER\KTY_MARKER.csproj", "{80219462-EE8B-4D4B-AB6D-3186D11BD3F7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{0F6A2C2E-5B1D-4C0B-9E55-3A7D2B9C1E44}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarkerTool", "tools\MarkerTool\MarkerTool.csproj", "{743B329B-87C6-464E-9CB1-5ECE489B17D7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{80219462-EE8B-4D4B-AB6D-3186D11BD3F7}.Debug|x64.ActiveCfg = Debug|x64
+		{80219462-EE8B-4D4B-AB6D-3186D11BD3F7}.Debug|x64.Build.0 = Debug|x64
+		{80219462-EE8B-4D4B-AB6D-3186D11BD3F7}.Debug|x86.ActiveCfg = Debug|x86
+		{80219462-EE8B-4D4B-AB6D-3186D11BD3F7}.Debug|x86.Build.0 = Debug|x86
+		{80219462-EE8B-4D4B-AB6D-3186D11BD3F7}.Release|x64.ActiveCfg = Release|x64
+		{80219462-EE8B-4D4B-AB6D-3186D11BD3F7}.Release|x64.Build.0 = Release|x64
+		{80219462-EE8B-4D4B-AB6D-3186D11BD3F7}.Release|x86.ActiveCfg = Release|x86
+		{80219462-EE8B-4D4B-AB6D-3186D11BD3F7}.Release|x86.Build.0 = Release|x86
+		{743B329B-87C6-464E-9CB1-5ECE489B17D7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{743B329B-87C6-464E-9CB1-5ECE489B17D7}.Debug|x64.Build.0 = Debug|Any CPU
+		{743B329B-87C6-464E-9CB1-5ECE489B17D7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{743B329B-87C6-464E-9CB1-5ECE489B17D7}.Debug|x86.Build.0 = Debug|Any CPU
+		{743B329B-87C6-464E-9CB1-5ECE489B17D7}.Release|x64.ActiveCfg = Release|Any CPU
+		{743B329B-87C6-464E-9CB1-5ECE489B17D7}.Release|x64.Build.0 = Release|Any CPU
+		{743B329B-87C6-464E-9CB1-5ECE489B17D7}.Release|x86.ActiveCfg = Release|Any CPU
+		{743B329B-87C6-464E-9CB1-5ECE489B17D7}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{80219462-EE8B-4D4B-AB6D-3186D11BD3F7} = {BD841F1C-453E-431A-818F-4C42EA660B6C}
+		{743B329B-87C6-464E-9CB1-5ECE489B17D7} = {0F6A2C2E-5B1D-4C0B-9E55-3A7D2B9C1E44}
+	EndGlobalSection
+EndGlobal

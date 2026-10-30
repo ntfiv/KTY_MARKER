@@ -1,0 +1,78 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- 構成の理由(DllExport・DebugType=none など)はKTY_HOSO.csprojのコメントを参照。
+         BVE5は32bit(x86のDLL)、BVE6は64bit(x64のDLL)で、Vehicle.txtのAts32/Ats64で別々に指す。
+         音声の取り込み(WASAPI)は自前のCOM相互運用で書いているので、NAudioなどの依存DLLは無い
+         (KTY_libフォルダもAssemblyResolveも不要)。 -->
+    <TargetFramework>net48</TargetFramework>
+    <Platforms>x86;x64</Platforms>
+    <LangVersion>latest</LangVersion>
+    <DebugType>none</DebugType>
+    <RootNamespace>KTY_MARKER</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)' == 'x64'">
+    <AssemblyName>KTY_MARKER64</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)' != 'x64'">
+    <PlatformTarget>x86</PlatformTarget>
+    <AssemblyName>KTY_MARKER</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DllExportIdent>B7B8E4B0-B021-46B2-9A8A-0AE017D61251</DllExportIdent>
+    <DllExportMetaLibName>DllExport.dll</DllExportMetaLibName>
+    <DllExportNamespace>KTY_MARKER</DllExportNamespace>
+    <DllExportDDNSCecil>true</DllExportDDNSCecil>
+    <DllExportSkipOnAnyCpu>false</DllExportSkipOnAnyCpu>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DllExportOrdinalsBase>1</DllExportOrdinalsBase>
+    <DllExportGenExpLib>false</DllExportGenExpLib>
+    <DllExportOurILAsm>false</DllExportOurILAsm>
+    <DllExportSysObjRebase>false</DllExportSysObjRebase>
+    <DllExportLeaveIntermediateFiles>false</DllExportLeaveIntermediateFiles>
+    <DllExportTimeout>30000</DllExportTimeout>
+    <DllExportPeCheck>6</DllExportPeCheck>
+    <DllExportPatches>0</DllExportPatches>
+    <DllExportRefreshObj>false</DllExportRefreshObj>
+    <DllExportILAsmExternAsm />
+    <DllExportILAsmTypeRef />
+    <DllExportTypeRefOptions>0</DllExportTypeRefOptions>
+    <DllExportRefPackages />
+    <DllExportPreProcType>0</DllExportPreProcType>
+    <DllExportPostProcType>0</DllExportPostProcType>
+    <DllExportDir>$(MSBuildProjectDirectory)\..\..\</DllExportDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="DllExport">
+      <Version>1.8.1</Version>
+      <Visible>false</Visible>
+      <Wz>1</Wz>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="KTY_MARKER.ini.sample" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="DllExportCompileCheckShim.cs" Condition="'$(MSBuildRuntimeType)' == 'Full'" />
+  </ItemGroup>
+  <!-- 以下はDllExportの定型(KTY_TUNNEL.csprojと同じ。デスクトップ版MSBuildでだけ有効)。 -->
+  <ImportGroup Label=".NET DllExport" Condition="'$(MSBuildRuntimeType)' == 'Full'">
+    <Import Project="$(DllExportDir)packages\DllExport.1.8.1\tools\net.r_eg.DllExport.targets" Condition="Exists($([MSBuild]::Escape('$(DllExportDir)packages\DllExport.1.8.1\tools\net.r_eg.DllExport.targets')))" Label="8337224c9ad9e356" />
+  </ImportGroup>
+  <Target Name="DllExportRestorePkg" BeforeTargets="PrepareForBuild" Condition="'$(MSBuildRuntimeType)' == 'Full'">
+    <Error Condition="'$(DllExportNoRestore)'!='true' And !Exists('$(DllExportDir)DllExport.bat')" Text="DllExport.bat was not found in $(DllExportDir); https://github.com/3F/DllExport" />
+    <Exec Condition="'$(DllExportNoRestore)'!='true' And ('$(DllExportModImported)'!='true' Or !Exists('$(DllExportDir)packages\DllExport.1.8.1\tools\net.r_eg.DllExport.targets') Or !Exists('$(DllExportDir)packages\DllExport.1.8.1\gcache')) And Exists('$(DllExportDir)DllExport.bat')" Command=".\DllExport.bat  -action Restore" WorkingDirectory="$(DllExportDir)" />
+    <MSBuild Condition="'$(DllExportModImported)'!='true'" Projects="$(DllExportDir)packages\DllExport.1.8.1\tools\net.r_eg.DllExport.targets" Targets="DllExportMetaXBaseTarget" Properties="TargetFramework=$(TargetFramework)">
+      <Output TaskParameter="TargetOutputs" PropertyName="DllExportMetaXBase" />
+    </MSBuild>
+    <ItemGroup>
+      <Reference Include="DllExport, PublicKeyToken=8337224c9ad9e356">
+        <HintPath>$(DllExportDir)packages\DllExport.1.8.1\gcache\$(DllExportMetaXBase)\$(DllExportNamespace)\$(DllExportMetaLibName)</HintPath>
+        <Private>False</Private>
+        <SpecificVersion>False</SpecificVersion>
+      </Reference>
+    </ItemGroup>
+  </Target>
+  <Target Name="DllExportRPkgDynamicImport" BeforeTargets="PostBuildEvent" DependsOnTargets="GetFrameworkPaths" Condition="'$(MSBuildRuntimeType)' == 'Full' And '$(DllExportModImported)'!='true' And '$(DllExportRPkgDyn)'!='false'">
+    <MSBuild BuildInParallel="true" UseResultsCache="true" Projects="$(MSBuildProjectFullPath)" Properties="Configuration=$(Configuration);DllExportRPkgDyn=true" Targets="Build" />
+  </Target>
+</Project>

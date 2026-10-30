@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- マーカー入りWAVの作成と、検知の確認をするコマンドラインツール。検知・取り込みのコードは
+       プラグイン本体(src\KTY_MARKER)と同じファイルをリンクして使う(コピーではない)ので、
+       ここで確かめた結果がそのままプラグインでの動作になる。 -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Platforms>AnyCPU</Platforms>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+    <RootNamespace>KTY_MARKER.Tool</RootNamespace>
+    <AssemblyName>MarkerTool</AssemblyName>
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\src\KTY_MARKER\AtsDebug.cs" Link="Shared\AtsDebug.cs" />
+    <Compile Include="..\..\src\KTY_MARKER\ConfirmBeeper.cs" Link="Shared\ConfirmBeeper.cs" />
+    <Compile Include="..\..\src\KTY_MARKER\DoorSequenceTracker.cs" Link="Shared\DoorSequenceTracker.cs" />
+    <Compile Include="..\..\src\KTY_MARKER\CoreAudioInterop.cs" Link="Shared\CoreAudioInterop.cs" />
+    <Compile Include="..\..\src\KTY_MARKER\LoopbackCapture.cs" Link="Shared\LoopbackCapture.cs" />
+    <Compile Include="..\..\src\KTY_MARKER\MarkerConfig.cs" Link="Shared\MarkerConfig.cs" />
+    <Compile Include="..\..\src\KTY_MARKER\ToneDetector.cs" Link="Shared\ToneDetector.cs" />
+  </ItemGroup>
+</Project>
